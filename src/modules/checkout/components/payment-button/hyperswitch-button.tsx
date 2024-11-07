@@ -48,18 +48,21 @@ export const HyperswitchPaymentButton = ({
       })
       setHyper(hyper)
 
-      // const appearance = {
-      //   theme: "midnight",
-      // }
-      const widgets = hyper.widgets({ clientSecret })
+      const appearance = { theme: cart?.payment_session?.data?.theme }
+      const styles = JSON.parse(
+        cart?.payment_session?.data?.appearance as string
+      )
+      const unifiedCheckoutOptions = styles
+        ? { ...styles }
+        : {
+            layout: "tabs",
+            wallets: {
+              walletReturnUrl: "https://example.com/complete",
+            },
+          }
+      const widgets = hyper.widgets({ appearance, clientSecret })
       setWidgets(widgets)
-      const unifiedCheckoutOptions = {
-        layout: "tabs",
-        wallets: {
-          walletReturnUrl: "https://example.com/complete",
-          //Mandatory parameter for Wallet Flows such as Googlepay, Paypal and Applepay
-        },
-      }
+      
       const unifiedCheckout = widgets.create("payment", unifiedCheckoutOptions)
       checkoutComponent.current = unifiedCheckout
       unifiedCheckout.mount("#unified-checkout")
@@ -68,7 +71,7 @@ export const HyperswitchPaymentButton = ({
       load()
     }
     document.body.appendChild(scriptTag)
-  }, [clientSecret])
+  }, [clientSecret, cart])
 
   const handlePayment = useCallback(async () => {
     if (!hyper || !widgets) {
