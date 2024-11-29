@@ -43,7 +43,6 @@ export async function getOrSetCart(countryCode: string) {
     setCartId(cart.id)
     revalidateTag("cart")
   }
-
   if (cart && cart?.region_id !== region.id) {
     await sdk.store.cart.update(
       cart.id,
@@ -53,7 +52,6 @@ export async function getOrSetCart(countryCode: string) {
     )
     revalidateTag("cart")
   }
-
   return cart
 }
 
@@ -62,7 +60,7 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
   if (!cartId) {
     throw new Error("No existing cart found, please create one before updating")
   }
-
+console.log("updateCart",data)
   return sdk.store.cart
     .update(cartId, data, {}, getAuthHeaders())
     .then(({ cart }) => {
@@ -125,6 +123,7 @@ export async function updateLineItem({
   await sdk.store.cart
     .updateLineItem(cartId, lineId, { quantity }, {}, getAuthHeaders())
     .then(() => {
+      console.log("Updated line item")
       revalidateTag("cart")
     })
     .catch(medusaError)
@@ -143,6 +142,7 @@ export async function deleteLineItem(lineId: string) {
   await sdk.store.cart
     .deleteLineItem(cartId, lineId, getAuthHeaders())
     .then(() => {
+      console.log("Deleted line item")
       revalidateTag("cart")
     })
     .catch(medusaError)
@@ -343,6 +343,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
+      console.log("setAddresses",data)
     await updateCart(data)
   } catch (e: any) {
     return e.message

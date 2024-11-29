@@ -14,6 +14,7 @@ import PaymentContainer from "@modules/checkout/components/payment-container"
 import { isStripe as isStripeFunc, paymentInfoMap } from "@lib/constants"
 import { StripeContext } from "@modules/checkout/components/payment-wrapper"
 import { initiatePaymentSession } from "@lib/data/cart"
+import { UpdatePaymentProviderSession } from "@medusajs/types"
 
 const Payment = ({
   cart,
@@ -89,8 +90,15 @@ const Payment = ({
         isStripeFunc(selectedPaymentMethod) && !activeSession
 
       if (!activeSession) {
+        console.log("initiatePaymentSession",cart)
         await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
+          context: {
+            email:cart?.customer.email,
+            customer:cart?.customer,
+            billing_address:cart?.billing_address,
+            shipping_address:cart?.shipping_address,
+          },
         })
       }
 

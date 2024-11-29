@@ -31,6 +31,10 @@ export const paymentInfoMap: Record<
     icon: <CreditCard />,
   },
   // Add more payment providers here
+  pp_hyperswitch_hyperswitch:{
+    title: "Hyperswitch",
+    icon: <CreditCard />,
+  }
 }
 
 // This only checks if it is native stripe for card payments, it ignores the other stripe-based providers
@@ -43,7 +47,9 @@ export const isPaypal = (providerId?: string) => {
 export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
 }
-
+export const isHyperswitch = (providerId?: string) => {
+  return providerId?.startsWith("pp_hyperswitch")
+}
 // Add currencies that don't need to be divided by 100
 export const noDivisionCurrencies = [
   "krw",
