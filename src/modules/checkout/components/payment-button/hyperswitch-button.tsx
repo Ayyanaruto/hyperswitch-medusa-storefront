@@ -1,8 +1,10 @@
 import { HttpTypes } from "@medusajs/types"
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { Button, useToast } from "@medusajs/ui"
+import { ErrorPage } from "app/[countryCode]/(main)/payment/page"
 import { placeOrder } from "@lib/data/cart"
-import { usePathname, useRouter } from "next/navigation"
+import { redirect, usePathname, useRouter } from "next/navigation"
+
 
 interface ButtonProps {
   cart: Omit<HttpTypes.StoreCart, "refundable_amount" | "refunded_total">
@@ -92,9 +94,9 @@ console.log(cart?.payment_collection?.payment_sessions?.[0], "client_secret")
       redirect: "if_required", // if you wish to redirect always, otherwise it is defaulted to "if_required",
     })
     // if(status === "succeeded") {x
-    if (error?.type === "invalid_request") {
-      // await deletePaymentSessionForCart(cart.payment_session?.provider_id ?? "")
-      router.replace(pathname + "?step=delivery")
+    if (error)  {
+      setIsLoading(false)
+      router.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/payment-error`)
     }
 
     if (status === "succeeded"|| status === "requires_capture") {

@@ -357,9 +357,8 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
 export async function placeOrder() {
   const cartId = getCartId()
   if (!cartId) {
-    throw new Error("No existing cart found when placing an order")
+    throw new Error("No existing cart found when placing order")
   }
-
   const cartRes = await sdk.store.cart
     .complete(cartId, {}, getAuthHeaders())
     .then((cartRes) => {

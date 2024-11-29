@@ -15,6 +15,7 @@ import { isStripe as isStripeFunc, paymentInfoMap } from "@lib/constants"
 import { StripeContext } from "@modules/checkout/components/payment-wrapper"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { UpdatePaymentProviderSession } from "@medusajs/types"
+import { removeCartId } from "@lib/data/cookies"
 
 const Payment = ({
   cart,
@@ -90,7 +91,6 @@ const Payment = ({
         isStripeFunc(selectedPaymentMethod) && !activeSession
 
       if (!activeSession) {
-        console.log("initiatePaymentSession",cart)
         await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
           context: {
