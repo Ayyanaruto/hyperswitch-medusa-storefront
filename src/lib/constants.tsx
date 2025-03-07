@@ -26,6 +26,10 @@ export const paymentInfoMap: Record<
     title: "PayPal",
     icon: <PayPal />,
   },
+  pp_hyperswitch_hyperswitch: {
+    title: "Hyperswitch",
+    icon: <CreditCard />,
+  },
   pp_system_default: {
     title: "Manual Payment",
     icon: <CreditCard />,
@@ -42,6 +46,9 @@ export const isPaypal = (providerId?: string) => {
 }
 export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
+}
+export const isHyperswitch = (providerId?: string) => {
+  return providerId?.startsWith("pp_hyperswitch")
 }
 
 // Add currencies that don't need to be divided by 100
