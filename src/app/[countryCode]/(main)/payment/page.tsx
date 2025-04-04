@@ -26,7 +26,6 @@ const PaymentPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const status = params.get('status')
-    console.log(status, "status")
 
     const handlePayment = async () => {
       if (status === 'succeeded'|| status === 'requires_capture') { 

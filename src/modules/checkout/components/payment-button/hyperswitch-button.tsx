@@ -30,7 +30,6 @@ export const HyperswitchPaymentButton = ({
 
         return cart?.payment_collection?.payment_sessions?.[0]?.data?.client_secret ?? null
     }, [cart])
-    console.log(cart?.payment_collection?.payment_sessions?.[0], "client_secret")
     useEffect(() => {
         if (!clientSecret) {
             return
@@ -69,7 +68,6 @@ export const HyperswitchPaymentButton = ({
             }
             const widgets = hyper.widgets({ appearance, clientSecret })
             setWidgets(widgets)
-            console.log(unifiedCheckoutOptions, "unifiedCheckoutOptions")
             const unifiedCheckout = widgets.create("payment", unifiedCheckoutOptions)
             checkoutComponent.current = unifiedCheckout
             unifiedCheckout.mount("#unified-checkout")
@@ -97,7 +95,6 @@ export const HyperswitchPaymentButton = ({
         // if(status === "succeeded") {x
 
         if (status === "succeeded" || status === "requires_capture") {
-            console.log("unmounting")
             checkoutComponent.current.unmount()
             await placeOrder()
             setIsLoading(false)
