@@ -84,7 +84,7 @@ const Payment = ({
       if (!checkActiveSession) {
         await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
-            context : {
+            data: {
             email: cart?.customer.email,
             customer: cart?.customer,
             billing_address: cart?.billing_address,
