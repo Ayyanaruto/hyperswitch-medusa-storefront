@@ -95,10 +95,6 @@ export const HyperswitchPaymentButton = ({
             redirect: "if_required", // if you wish to redirect always, otherwise it is defaulted to "if_required",
         })
         // if(status === "succeeded") {x
-        if (error) {
-            setIsLoading(false)
-            router.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/payment-error`)
-        }
 
         if (status === "succeeded" || status === "requires_capture") {
             console.log("unmounting")
@@ -107,9 +103,26 @@ export const HyperswitchPaymentButton = ({
             setIsLoading(false)
             toast.toast({ variant: "success", title: `Payment is completed` })
         } else {
-            toast.toast({ variant: "info", title: `Payment Info ${status}` })
-            await placeOrder()
-            router.replace("/")
+            setIsLoading(false)
+            // Show toast for any failure case
+            toast.toast({ 
+                variant: "error", 
+                title: error ? `Payment failed: ${error.message || ''}` : 'Payment could not be completed' 
+            })
+            
+            if (error) {
+                console.error(error)
+                // Delay redirect to allow toast to be visible
+                setTimeout(() => {
+                    router.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/payment-error`)
+                }, 1500)
+            } else {
+                // Handle case where status is not successful but no error exists
+                console.error(`Payment failed with status: ${status}`)
+                setTimeout(() => {
+                    router.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/payment-error`)
+                }, 1500)
+            }
         }
     }, [cart.metadata?.provider_id, hyper, pathname, router, widgets])
 
