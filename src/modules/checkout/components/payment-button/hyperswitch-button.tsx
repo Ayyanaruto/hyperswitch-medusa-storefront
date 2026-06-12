@@ -34,6 +34,7 @@ export const HyperswitchPaymentButton = ({
         if (!clientSecret) {
             return
         }
+        console.debug("Hyperswitch: clientSecret present, initializing widgets")
         const scriptTag = document.createElement("script")
         scriptTag.setAttribute(
             "src",
@@ -70,6 +71,7 @@ export const HyperswitchPaymentButton = ({
             setWidgets(widgets)
             const unifiedCheckout = widgets.create("payment", unifiedCheckoutOptions)
             checkoutComponent.current = unifiedCheckout
+            console.debug("Hyperswitch: mounted unified checkout widget")
             unifiedCheckout.mount("#unified-checkout")
         }
         scriptTag.onload = () => {
@@ -85,13 +87,32 @@ export const HyperswitchPaymentButton = ({
 
         setIsLoading(true)
 
-        const { error, status } = await hyper.confirmPayment({
-            widgets,
-            confirmParams: {
-                return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment`,
-            },
-            redirect: "if_required", // if you wish to redirect always, otherwise it is defaulted to "if_required",
-        })
+        let result: any = null
+        try {
+            result = await hyper.confirmPayment({
+                widgets,
+                confirmParams: {
+                    return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment`,
+                },
+                redirect: "if_required", // if you wish to redirect always, otherwise it is defaulted to "if_required",
+            })
+        } catch (err: any) {
+            // Log and show more detailed error information for debugging
+            console.error("Hyperswitch confirmPayment threw:", err)
+            setIsLoading(false)
+            toast.toast({ variant: "error", title: `Payment failed: ${err?.message || "Unknown error"}` })
+            // If server returned JSON body, try to surface it
+            if (err?.response) {
+                // some libs attach response
+                console.error("Hyperswitch response:", err.response)
+            }
+            // Redirect to payment-error after short delay so user sees toast
+            setTimeout(() => {
+                router.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/payment-error`)
+            }, 1500)
+            return
+        }
+        const { error, status } = result || {}
         // if(status === "succeeded") {x
 
         if (status === "succeeded" || status === "requires_capture") {
